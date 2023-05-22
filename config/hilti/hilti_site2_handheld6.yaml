@@ -1,0 +1,65 @@
+# site1_handheld_1 80 score
+
+common:
+    lid_topic: "/hesai/pandar"
+    imu_topic: "/alphasense/imu"
+    con_frame: false # true: if you need to combine several LiDAR frames into one
+    con_frame_num: 1 # the number of frames combined
+    cut_frame: false # true: if you need to cut one LiDAR frame into several subframes
+    cut_frame_time_interval: 0.1 # should be integral fraction of 1 / LiDAR frequency   
+    time_diff_lidar_to_imu: 0.0015846550361175184 # Time offset between LiDAR and IMU calibrated by other algorithms, e.g., LI-Init (find in Readme)
+
+preprocess:
+    lidar_type: 4   # hesai 4, rs 5
+    scan_line: 32
+    timestamp_unit: 1           # the unit of time/t field in the PointCloud2 rostopic: 0-second, 1-milisecond, 2-microsecond, 3-nanosecond.
+    blind: 0.5
+    blind_for_human_pilot: 1.0
+     
+mapping:
+    imu_en: true
+    extrinsic_est_en: false # for aggressive motion, set this variable false
+    imu_time_inte: 0.0025 # = 1 / frequency of IMU , for hilti IMU hz is 400
+    satu_acc: 30.0 # the saturation value of IMU's acceleration. not related to the units
+    satu_gyro: 35 # the saturation value of IMU's angular velocity. not related to the units
+    acc_norm: 9.81 # 1.0 for g as unit, 9.81 for m/s^2 as unit of the IMU's acceleration
+    lidar_meas_cov: 0.01 # 0.001
+    acc_cov_output: 500
+    gyr_cov_output: 1000 
+    b_acc_cov: 0.0001 
+    b_gyr_cov: 0.0001 
+    imu_meas_acc_cov: 0.1 #0.1 # 2
+    imu_meas_omg_cov: 0.1 #0.1 # 2 
+    gyr_cov_input: 0.1 # for IMU as input model
+    acc_cov_input: 0.1 # for IMU as input model
+    plane_thr: 0.1 # 0.05, the threshold for plane criteria, the smaller, the flatter a plane
+    match_s: 81
+
+
+    fov_degree: 360 
+    det_range: 120.0
+
+
+    gravity: [0.0, 0.0, -9.810] # [-0.30, 0.880, -9.76] # liosam [0.0, 9.810, 0.0] # # preknown gravity, use when imu_en is false or start from a non-stationary state
+    
+    # extrinsic calibraiton
+    extrinsic_T: [-0.00695046499029016, -0.006713481609220226, 0.04989346097032105]
+    extrinsic_R: [ 0.006609639848469359, -0.999976224957192, 0.001965243352927243,
+                  -0.9999773650294641, -0.006612093869054185, -0.001244846735961018,
+                   0.001257811513201671, -0.001956970881110609, -0.9999972940839227]
+
+
+publish:
+    path_en: true                 # false: close the path output
+    scan_publish_en: true         # false: close all the point cloud output
+    scan_bodyframe_pub_en: false  # true: output the point cloud scans in IMU-body-frame
+
+pcd_save:
+    pcd_save_en: false
+    interval: -1                 # how many LiDAR frames saved in each pcd file; 
+                                 # -1 : all frames will be saved in ONE pcd file, may lead to memory crash when having too much frames.
+
+# For LiDAR odometry Saving
+trajectory_save:
+    traj_save_en: true
+    traj_file_path: "/root/workspace/src/Point-LIO_hilti/trajectory/site2_handheld_6.txt" # When you use docker, you should enter docker absolute path.
